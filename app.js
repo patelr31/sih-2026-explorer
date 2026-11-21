@@ -14,7 +14,7 @@ function countBy(items, key) {
 }
 
 function filtered() {
-  const q = state.q.toLowerCase();
+  const q = state.q.trim().toLowerCase();
   return ALL.filter((p) =>
     (!state.hideGeneric || !p.generic) &&
     (!state.healthOnly || p.health) &&
@@ -101,7 +101,7 @@ function render() {
   setBars(charts.org, countBy(rows, (p) => p.org_short).slice(0, 10));
   setBars(charts.tech, countBy(rows.filter((p) => p.tech.length), (p) => p.tech));
 
-  $("t-count").textContent = `${rows.length} shown`;
+  $("t-count").textContent = `${rows.length} shown${state.mislabelOnly ? ' · only "theme looks wrong" (Reset to clear)' : ""}`;
   $("rows").innerHTML = rows.map((p) => `<tr>
     <td class="id">${p.id}</td>
     <td class="title">${esc(p.title)}<div>${p.health ? '<span class="tag health">health</span>' : ""}${p.mislabel ? '<span class="tag warn">theme looks wrong</span>' : ""}${p.tech.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div></td>
@@ -123,6 +123,8 @@ async function init() {
   const data = await (await fetch("data/problems.json")).json();
   ALL = data.problems;
   $("deadline").textContent = data.meta.deadline;
+  if (Date.now() > Date.parse(data.meta.deadline + " 23:59")) $("due").textContent = "Idea submissions closed on";
+  $("n-orgs").textContent = new Set(ALL.map((p) => p.org)).size;
 
   for (const [t] of countBy(ALL, (p) => p.theme).sort((a, b) => a[0].localeCompare(b[0])))
     $("f-theme").insertAdjacentHTML("beforeend", `<option>${esc(t)}</option>`);
