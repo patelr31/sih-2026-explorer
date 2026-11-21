@@ -1,5 +1,7 @@
 # SIH 2026 Explorer
 
+**Live: https://sih-2026-explorer-tau.vercel.app**
+
 An interactive dashboard of the **226 Smart India Hackathon 2026 problem statements**.
 You can filter them by theme, organization, type and keyword, see where the problems
 come from, and find the health problems hidden under the wrong theme labels.
